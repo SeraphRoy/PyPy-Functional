@@ -43,3 +43,9 @@ pypy-c/pypy3-c as the interpreter; you can find more details about
 various installation schemes here:
 
     http://doc.pypy.org/en/latest/install.html
+    
+Links that Might be Useful
+===========================
+http://eli.thegreenplace.net/2010/06/30/python-internals-adding-a-new-statement-to-python/
+http://hirzels.com/martin/papers/dls12-thorn-patterns.pdf
+http://doc.pypy.org/en/latest/getting-started-dev.html?highlight=grammar
