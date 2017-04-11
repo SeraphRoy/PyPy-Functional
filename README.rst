@@ -51,3 +51,32 @@ Links that Might be Useful
     http://hirzels.com/martin/papers/dls12-thorn-patterns.pdf
     
     http://doc.pypy.org/en/latest/getting-started-dev.html?highlight=grammar
+
+ 
+Some Use Cases (may not be the same syntax)
+===============
+If none of the cases matches, it will throw an exception.
+We may want match to be an expression but not a statement.
+
+def haha(arg):
+    x = match(arg):
+        with 1 or 2:
+            3
+        with 3:
+            7
+        with y if type(y) is Int:
+            2
+        with _:
+            throws Exception("Not an Int")
+    return x
+
+def yosh(arg):
+    x = match(arg):
+        with y if type(y) is list and not y:
+            [3]
+        with y if type(y) is set and not y:
+            {3}
+        with _:
+            print "nima"
+            None
+    return x
