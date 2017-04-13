@@ -1,0 +1,26 @@
+How to add grammar support for our pattern matching
+1. In file pypy / pypy / interpreter / pyparser / data / Grammar2.7, define a new matching statement
+test: bunch of 'and' 'or' 'not' tests combined with if else and lambda statement
+suite: a simple statement or a new stmt at new line
+
+compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated | matching_stmt
+matching_para: expr | test
+matching_stmt: 'match' '(' expr ')' ':' with matching_para ':' expr ( with matching_para ':' expr )*
+
+above grammar is likely to cause ambigious but I am going to fix it later.
+
+2. In file pypy / pypy / interpreter / astcompiler / tools / Python.asdl, add a new node for matching statement and matching_para
+
+// not sure how to handle this one yet
+matching_para = Expression(expr body)
+
+stmt = FunctionDef(identifier name, arguments args,
+                   stmt* body, expr* decorator_list) 
+       | ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
+       | For(expr target, expr iter, stmt* body, stmt* orelse)
+       | While(expr test, stmt* body, stmt* orelse)
+       | Matching( expr target, matching_para* mp, expr* vals )
+
+3. In file pypy / pypy / interpreter / astcompiler / ast.py, define a new class Matching
+
+// haven't figure out how to do it
