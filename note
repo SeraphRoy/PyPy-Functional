@@ -22,5 +22,18 @@ stmt = FunctionDef(identifier name, arguments args,
        | Matching( expr target, matching_para* mp, expr* vals )
 
 3. In file pypy / pypy / interpreter / astcompiler / ast.py, define a new class Matching
+the new Matching class should contain following functions
+* __init__
+* walkabout(self, visitor)
+* mutate_over(self, visitor)
+* to_object(self, space)
+* from_object(space, w_node)
 
 // haven't figure out how to do it
+// no sure if this code can be auto generate or I have to write it through
+
+4. If everything was implemented correctly, now we have a choice. When we visited Matching node in AST, we can either generate the corresponding byte code or we can repalce the matching node with a set of other existing node that will perform the same functionality.
+
+If we decide to generate the bytecode for matching, we will need to modify the pypy / pypy / interpreter / astcompiler / codegen.py to add the rule for matching.
+
+If we decide to repalce the matching node with other existing nodes, we won't need to deal with the byte code.
