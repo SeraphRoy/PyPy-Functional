@@ -37,3 +37,36 @@ the new Matching class should contain following functions
 If we decide to generate the bytecode for matching, we will need to modify the pypy / pypy / interpreter / astcompiler / codegen.py to add the rule for matching.
 
 If we decide to repalce the matching node with other existing nodes, we won't need to deal with the byte code.
+
+
+
+
+PYPY bytecode note   http://doc.pypy.org/en/latest/interpreter.html
+*　The major differences between pypy and cpython's bytecode interpreter are the overall usage of the object space indirection to perform operations on objects, and the organization of the built-in modules (described here).
+*  Interpreting code objects means instantiating and initializing a Frame class and then calling its frame.eval() method
+*  use python dis library to display the bytecode of the python code
+*  CPython and PyPy are stack-based virtual machines, i.e. they don’t have registers but instead push object to and pull objects from a stack. 
+*  interpreter-level is executed directly on the machine and invoking application-level functions leads to an bytecode interpretation indirection. 
+*  Frame Classes holds
+    *  the local scope holding name-value bindings
+    *  a blockstack containing (nested) information regarding the control flow of a function
+    *  a value stack where bytecode interpretation pulls object from and puts results on. 
+    *  a reference to the globals dictionary, containing module-level name-value bindings
+    *  debugging information
+*  Code Class 
+    *  they are only immutable representations of source code
+    *  contains bunch of variable not very releveant to my work now
+*  Function and Method classes
+    *  func_name - name of function
+    *  func_code - code object
+    *  func_globals - reference to the global dictionary 
+    *  and something else
+*  Arguments Class
+    *  parsing arguments passed to functions
+    *  positional arguments, keyword arguemnts, str args .......
+    *  can get bound to a class or instance in which case the first argument to the underlying function becomes the bound object
+    *  
+
+
+
+
