@@ -20,8 +20,10 @@ stmt = FunctionDef(identifier name, arguments args,
        | For(expr target, expr iter, stmt* body, stmt* orelse)
        | While(expr test, stmt* body, stmt* orelse)
        | Matching( expr target, matching_para* mp, expr* vals )
+       
+3. implement a parse tree node matching_node class and a ast node ast.matching class
 
-3. In file pypy / pypy / interpreter / astcompiler / ast.py, define a new class Matching
+4. In file pypy / pypy / interpreter / astcompiler / ast.py, define a new class Matching
 the new Matching class should contain following functions
 * __init__
 * walkabout(self, visitor)
@@ -32,7 +34,7 @@ the new Matching class should contain following functions
 // haven't figure out how to do it
 // no sure if this code can be auto generate or I have to write it through
 
-4. If everything was implemented correctly, now we have a choice. When we visited Matching node in AST, we can either generate the corresponding byte code or we can repalce the matching node with a set of other existing node that will perform the same functionality.
+5. If everything was implemented correctly, now we have a choice. When we visited Matching node in AST, we can either generate the corresponding byte code or we can repalce the matching node with a set of other existing node that will perform the same functionality.
 
 If we decide to generate the bytecode for matching, we will need to modify the pypy / pypy / interpreter / astcompiler / codegen.py to add the rule for matching.
 
@@ -41,8 +43,8 @@ If we decide to repalce the matching node with other existing nodes, we won't ne
 
 
 
-PYPY bytecode note   http://doc.pypy.org/en/latest/interpreter.html
-*　The major differences between pypy and cpython's bytecode interpreter are the overall usage of the object space indirection to perform operations on objects, and the organization of the built-in modules (described here).
+PYPY bytecode note    
+*  The major differences between pypy and cpython's bytecode interpreter are the overall usage of the object space indirection to perform operations on objects, and the organization of the built-in modules (described here).
 *  Interpreting code objects means instantiating and initializing a Frame class and then calling its frame.eval() method
 *  use python dis library to display the bytecode of the python code
 *  CPython and PyPy are stack-based virtual machines, i.e. they don’t have registers but instead push object to and pull objects from a stack. 
@@ -65,8 +67,36 @@ PYPY bytecode note   http://doc.pypy.org/en/latest/interpreter.html
     *  parsing arguments passed to functions
     *  positional arguments, keyword arguemnts, str args .......
     *  can get bound to a class or instance in which case the first argument to the underlying function becomes the bound object
-    *  
 
 
+Note on PyPy Parser
+*  Tokenizer
+    *  implemented as a single function at pypy/interpreter/pyparser/pytokenizer.py
+    *  at first define the number, character( including _ ) and white sapce
+    *  match_encoding_declaration(comment):
+        *  for the string that has the format xxxxxcoding:=   abcd, return abcd
+    *  generate_tokens(lines, flags):
+        *  generate Token instances contains
+            *  Token instance
+            *  whole line as a string
+            *  line number
+            *  position on the line of the end of the token
+    *  shouldn't need to worry too much about tokenizer since I can define keyword directly in garammar file
+    
+*  Parser
+    *  first represents the grammar as rules corresponding to a set of Nondeterministic Finite Automatons (NFAs)
+    *  converts them to a set of Deterministic Finite Automatons (DFAs)
+    *  grammar builder assigns each DFA state a number and packs them into a list for the parser to use
+    
+*  Compiler
+    *  convert the parse tree into an Abstract Syntax Tree (AST).
+    *  defination to AST is in pypy/interpreter/astcompiler/tools/Python.asdl
+    *  walks down the parse tree building nodes as it goes
 
+*  Bytecode generation
+    *  generation is defined in  pypy/interpreter/astcompiler/codegen.py
+    *  vist every node in ast in order to omit the corresponding bytecode
+    *  Each bytecode is represented temporarily by the Instruction class
+    *  After all bytecodes have been emitted, it’s time to build the code object. 
+    *  Finally, everything is passed to a brand new PyCode object
 
