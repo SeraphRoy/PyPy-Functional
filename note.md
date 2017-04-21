@@ -106,6 +106,7 @@ Note on pypy grammer
 Symbol | Meaning
 ------------ | -------------
 '*' | repetition-symbol
+'+' | repeatition-at-least-one
 '-' | except-symbol
 , | concatenate-symbol
 '|' | definition-separator-symbol
@@ -125,6 +126,13 @@ Symbol | Meaning | Meaning | Symbol
 
 *  a non-terminal is any lowercase word and a terminal is all uppercase or surrounded by quotes
 *  Start symbols for the grammar = single_input, file_input , eval_input 
+*  'simple_stmt' can be used to build multiple 'small_stmt'
+*  'small_stmt' contains statments that can be write in one line. Examples would be import statement and print statement
+*  'test' contains bunch of expressions that can eventully be evaulated to a expr ( boolean? )
+*  'flow_stmt' contains statments  that can change program's flow, like return and break
+*  'compound_stmt' contains all of the long statments, including if statement and all the loops
+*  'suite' can be any 'simple_stmt' or a line of any statement
+*  'exprlist', 'testlist' contians bunch of expr or test
 
 
 
