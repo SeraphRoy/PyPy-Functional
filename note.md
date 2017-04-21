@@ -1,49 +1,46 @@
-How to add grammar support for our pattern matching
-1. In file pypy / pypy / interpreter / pyparser / data / Grammar2.7, define a new matching statement
-test: bunch of 'and' 'or' 'not' tests combined with if else and lambda statement
-suite: a simple statement or a new stmt at new line
+High level idea
+=====================
+*  In file pypy / pypy / interpreter / pyparser / data / Grammar2.7, define a new matching statement
+    *  test: bunch of 'and' 'or' 'not' tests combined with if else and lambda statement
+    *  suite: a simple statement or a new stmt at new line
 
-compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated | matching_stmt
-matching_para: expr | test
-matching_stmt: 'match' '(' expr ')' ':' with matching_para ':' expr ( with matching_para ':' expr )*
+    *  compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated | matching_stmt
+    *  matching_para: expr | test
+    *  matching_stmt: 'match' '(' expr ')' ':' with matching_para ':' expr ( with matching_para ':' expr )*
 
-above grammar is likely to cause ambigious but I am going to fix it later.
+*  above grammar is likely to cause ambigious but I am going to fix it later.
 
-2. In file pypy / pypy / interpreter / astcompiler / tools / Python.asdl, add a new node for matching statement and matching_para
+* In file pypy / pypy / interpreter / astcompiler / tools / Python.asdl, add a new node for matching statement and matching_para
 
-// not sure how to handle this one yet
-matching_para = Expression(expr body)
+    *  matching_para = Expression(expr body)
 
-stmt = FunctionDef(identifier name, arguments args,
-                   stmt* body, expr* decorator_list) 
-       | ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
-       | For(expr target, expr iter, stmt* body, stmt* orelse)
-       | While(expr test, stmt* body, stmt* orelse)
-       | Matching( expr target, matching_para* mp, expr* vals )
+    *         stmt = FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list) 
+    *         | ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
+    *         | For(expr target, expr iter, stmt* body, stmt* orelse)
+    *         | While(expr test, stmt* body, stmt* orelse)
+    *         | Matching( expr target, matching_para* mp, expr* vals )
        
-3. implement a parse tree node matching_node class and a ast node ast.matching class
+* implement a parse tree node matching_node class and a ast node ast.matching class
 
-4. In file pypy / pypy / interpreter / astcompiler / ast.py, define a new class Matching
-the new Matching class should contain following functions
-* __init__
-* walkabout(self, visitor)
-* mutate_over(self, visitor)
-* to_object(self, space)
-* from_object(space, w_node)
+* In file pypy / pypy / interpreter / astcompiler / ast.py, define a new class Matching
+* the new Matching class should contain following functions
+    * __init__
+    * walkabout(self, visitor)
+    * mutate_over(self, visitor)
+    * to_object(self, space)
+    * from_object(space, w_node)
 
-// haven't figure out how to do it
-// no sure if this code can be auto generate or I have to write it through
+* If everything was implemented correctly, now we have a choice. When we visited Matching node in AST, we can either generate the corresponding byte code or we can repalce the matching node with a set of other existing node that will perform the same functionality.
 
-5. If everything was implemented correctly, now we have a choice. When we visited Matching node in AST, we can either generate the corresponding byte code or we can repalce the matching node with a set of other existing node that will perform the same functionality.
+* If we decide to generate the bytecode for matching, we will need to modify the pypy / pypy / interpreter / astcompiler / codegen.py to add the rule for matching.
 
-If we decide to generate the bytecode for matching, we will need to modify the pypy / pypy / interpreter / astcompiler / codegen.py to add the rule for matching.
-
-If we decide to repalce the matching node with other existing nodes, we won't need to deal with the byte code.
+* If we decide to repalce the matching node with other existing nodes, we won't need to deal with the byte code.
 
 
 
 
-PYPY bytecode note    
+PYPY bytecode note  
+====================
 *  The major differences between pypy and cpython's bytecode interpreter are the overall usage of the object space indirection to perform operations on objects, and the organization of the built-in modules (described here).
 *  Interpreting code objects means instantiating and initializing a Frame class and then calling its frame.eval() method
 *  use python dis library to display the bytecode of the python code
@@ -70,6 +67,7 @@ PYPY bytecode note
 
 
 Note on PyPy Parser
+===================
 *  Tokenizer
     *  implemented as a single function at pypy/interpreter/pyparser/pytokenizer.py
     *  at first define the number, character( including _ ) and white sapce
@@ -99,4 +97,34 @@ Note on PyPy Parser
     *  Each bytecode is represented temporarily by the Instruction class
     *  After all bytecodes have been emitted, it’s time to build the code object. 
     *  Finally, everything is passed to a brand new PyCode object
+
+Note on pypy grammer
+=====================
+*  file directory: pypy / pypy / interpreter / pyparser / data / Grammar2.7
+*  http://stackoverflow.com/questions/19351065/how-is-the-python-grammar-used-internally is very helpful in understanding the grammar file
+*  
+Symbol | Meaning
+------------ | -------------
+'*' | repetition-symbol
+'-' | except-symbol
+, | concatenate-symbol
+'|' | definition-separator-symbol
+= | defining-symbol
+; | terminator-symbol
+. | terminator-symbol
+
+Symbol | Meaning | Meaning | Symbol
+------------ | ------------- | ------------ | -------------
+' | first-quote-symbol | first-quote-symbol | '
+" | second-quote-symbol      |    second-quote-symbol | "
+(* |start-comment-symbol     |     end-comment-symbol | *)
+( | start-group-symbol       |       end-group-symbol | )
+[ | start-option-symbol      |      end-option-symbol | ]
+{ | start-repeat-symbol      |      end-repeat-symbol | }
+? | special-sequence-symbol | special-sequence-symbol | ?
+
+*  a non-terminal is any lowercase word and a terminal is all uppercase or surrounded by quotes
+*  Start symbols for the grammar = single_input, file_input , eval_input 
+
+
 
