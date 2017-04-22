@@ -52,11 +52,19 @@ Links that Might be Useful
     
     http://doc.pypy.org/en/latest/getting-started-dev.html?highlight=grammar
 
+Pattern vs. Types
+==================
+Patterns:
+1. check whether a given input has certain "structure"
+2. extract the pieces or no piece
+3. can optionally bind pieces to variables that can be used later
+
  
 Some Use Cases (may not be the same syntax)
 ===============
 If none of the cases matches, it will throw an exception.
 We may want match to be an expression but not a statement.
+
 
 def haha(arg):
     x = match(arg):
@@ -72,11 +80,27 @@ def haha(arg):
 
 def yosh(arg):
     x = match(arg):
-        with y if type(y) is list and not y:
+        with []:
             [3]
-        with y if type(y) is set and not y:
+        with {}:
             {3}
         with _:
             print "nima"
             None
     return x
+    
+More use cases of match:
+
+      x = match(L):
+         [x : str , y : str, x[::-1]]:
+            x + y
+         _:
+            "Wrong"
+            
+      y = match(L):
+         [_ : int, _ : int, _ : int]:
+            ...
+         _:
+            ...
+      
+     
