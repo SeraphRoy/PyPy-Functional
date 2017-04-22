@@ -889,6 +889,10 @@ class While(stmt):
 
 State.ast_type('While', 'stmt', ['test', 'body', 'orelse'])
 
+class Match(stmt):
+
+    def __init__(self):
+        ...
 
 class If(stmt):
 
