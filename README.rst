@@ -103,4 +103,6 @@ More use cases of match:
          _:
             ...
       
-     
+Problems of Expression vs. Statement:
+
+If we make match a expression, it would include indentations inside the expression, which is not normal and intuitive for python, and not sure if it is even possible. However, it is definetly more powerful than just a statement.
