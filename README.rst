@@ -66,28 +66,28 @@ If none of the cases matches, it will throw an exception.
 We may want match to be an expression but not a statement.
 
 
-def haha(arg):
-    x = match(arg):
-        with 1 or 2:
-            3
-        with 3:
-            7
-        with y if type(y) is Int:
-            2
-        with _:
-            throws Exception("Not an Int")
-    return x
+    def haha(arg):
+        x = match(arg):
+            with 1 or 2:
+                3
+            with 3:
+                7
+            with y : Int:
+                2
+            with _:
+                throws Exception("Not an Int")
+        return x
 
-def yosh(arg):
-    x = match(arg):
-        with []:
-            [3]
-        with {}:
-            {3}
-        with _:
-            print "nima"
-            None
-    return x
+    def yosh(arg):
+        x = match(arg):
+            with []:
+                [3]
+            with {}:
+                {3}
+            with _:
+                print "nima"
+                None
+        return x
     
 More use cases of match:
 
